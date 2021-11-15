@@ -1,0 +1,37 @@
+# Maintainer: Denis Gruzdev <codingjerk at gmail dot com>
+
+pkgname=datagrip-eap
+pkgver=213.5744.9
+pkgrel=1
+pkgdesc='Smart SQL Editor and Advanced Database Client Packed Together for Optimum Productivity. Early Access Program (EAP) version'
+arch=('any')
+url='https://www.jetbrains.com/datagrip/nextversion'
+license=('custom:jetbrains')
+depends=('glib2')
+conflicts=('0xdbe' '0xdbe-eap' 'datagrip' 'datagrip-jre')
+options=('!strip')
+source=("https://download-cdn.jetbrains.com/datagrip/datagrip-${pkgver}.tar.gz"
+        jetbrains-datagrip.desktop
+        LICENSE)
+b2sums=('e16863956029efd566adce58dc61e4757977ab6d890fd7e536181a564d65a81306e8d4dd4a3b8ace377ff2b394d088d68423495b5ffb716af60a064797303421'
+        '780f396da1c57c872b17e10576f2671346ad7c0442efec77369428b465befe772b5fd2c9c81a46ffe458472c2550082fb12adaf9d39b51fb41499bfb1bbca441'
+        '7b3207d7bfa3ef8ff038f879c344574f6ba905b385c5a2ec7ee4c29872be4d1a24c1fd4064af8d094215db4b90caab3ee4718334efb1d346620e450cfbd70614')
+
+package() {
+  install -dm755 "${pkgdir}"/opt/
+  install -dm755 "${pkgdir}"/usr/bin/
+  install -dm755 "${pkgdir}"/usr/share/applications/
+  install -dm755 "${pkgdir}"/usr/share/pixmaps/
+
+  cp -a "${srcdir}"/DataGrip-${pkgver}/ "${pkgdir}"/opt/datagrip
+  rm -rf "${pkgdir}"/opt/datagrip/jbr
+
+  ln -s /opt/datagrip/bin/datagrip.sh "${pkgdir}"/usr/bin/datagrip
+  install -m644 "${srcdir}"/jetbrains-datagrip.desktop "${pkgdir}"/usr/share/applications/
+  install -m644 "${pkgdir}"/opt/datagrip/bin/datagrip.svg "${pkgdir}"/usr/share/pixmaps/datagrip.svg
+  install -Dm644 LICENSE "${pkgdir}"/usr/share/licenses/${pkgname}/LICENSE.txt
+
+  # JBR (JetBrains Runtime) for DataGrip - a patched JRE
+  install -dm755 "${pkgdir}"/opt/datagrip
+  cp -a "${srcdir}"/DataGrip-${pkgver}/jbr "${pkgdir}"/opt/datagrip
+}
